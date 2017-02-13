@@ -1,0 +1,10 @@
+---
+zone: aestus.xyz
+
+cloud_provider: dhc
+cloud_region: RegionOne
+
+server_name: gentoo
+
+cf_account: "{{ secret_cf_account }}"
+cf_apikey:  "{{ secret_cf_apikey  }}"
