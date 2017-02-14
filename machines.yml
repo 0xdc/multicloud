@@ -37,7 +37,55 @@
     - { type: A,    value: "{{ server.openstack.accessIPv4 }}" }
     - { type: AAAA, value: "{{ server.openstack.accessIPv6 }}" }
 
+  - add_host:
+      name: "{{ server.openstack.accessIPv6 }}"
+      group: "{{ server_name }}"
 
   vars_files:
   - config.yml
   - "{{ cloud_provider }}.yml"
+
+- hosts: all
+  tasks:
+  # Reduce aggressiveness of syncing
+  - stat:
+      path: /.ansible-sync
+    register: syncmark
+
+  - portage: sync=yes
+    when: syncmark.exists if defined and not syncmark.exists
+
+  - file:
+      path: /.ansible-sync
+      state: touch
+    when: syncmark.exists if defined and not syncmark.exists
+
+  # detect if systemd is installed
+  - shell: qlist -I sys-apps/systemd
+    failed_when: False
+    register: systemd
+
+  - portage: package={{ item }} state=absent
+    when: '"" == systemd.stdout'
+    with_items:
+    - sys-fs/udev
+    - virtual/udev
+
+  - portage: package=dev-vcs/git state=present
+
+  - git:
+      repo: https://github.com/0xdc/overlay
+      dest: /usr/local/0xdc-overlay
+
+  - file:
+      path: /etc/portage/repos.conf
+      state: directory
+
+  - copy:
+      src: /usr/local/0xdc-overlay/metadata/repos.conf
+      dest: /etc/portage/repos.conf/0xdc.conf
+      remote_src: True
+
+  - shell: eselect profile set 0xdc:amd64
+
+  - portage: package=sys-apps/systemd
