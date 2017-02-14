@@ -10,6 +10,11 @@
       meta: "role={{ server_name }}"
       flavor: "{{ flavor }}"
       image: "{{ image }}"
+      userdata: |
+        #cloud-config
+        runcmd:
+        - dhclient eth0
+        disable_root: True
 
       key_name: "{{ ansible_hostname }}"
     register: server
