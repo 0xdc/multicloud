@@ -53,12 +53,12 @@
     register: syncmark
 
   - portage: sync=yes
-    when: syncmark.exists if defined and not syncmark.exists
+    when: syncmark.stat.exists is defined and not syncmark.stat.exists
 
   - file:
       path: /.ansible-sync
       state: touch
-    when: syncmark.exists if defined and not syncmark.exists
+    when: syncmark.stat.exists is defined and not syncmark.stat.exists
 
   # detect if systemd is installed
   - shell: qlist -I sys-apps/systemd
