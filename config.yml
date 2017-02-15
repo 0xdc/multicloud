@@ -5,6 +5,7 @@ cloud_provider: dhc
 cloud_region: RegionOne
 
 server_name: gentoo
+replicas: 2
 
 cf_account: "{{ secret_cf_account }}"
 cf_apikey:  "{{ secret_cf_apikey  }}"
