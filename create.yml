@@ -24,10 +24,12 @@
 
       # solo affects these two attrs
       solo: yes
-      record: "{{ server_name }}"
+      record: "{{ server_name }}{{ replica }}"
       type: "{{ item.type }}"
 
       value: "{{ item.value }}"
+    loop_control:
+      label: "{{ server_name }}{{ replica }}"
     with_items:
     - { type: A,    value: "{{ server.openstack.accessIPv4 }}" }
     - { type: AAAA, value: "{{ server.openstack.accessIPv6 }}" }
