@@ -37,3 +37,4 @@
   - add_host:
       name: "{{ server.openstack.accessIPv6 }}"
       group: "{{ server_name }}"
+      ansible_python_interpreter: /usr/bin/python2
