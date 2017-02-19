@@ -73,3 +73,31 @@
     # without udev support
     environment:
       USE: -udev
+
+  - copy:
+      src: files/grub.default
+      dest: /etc/default/grub
+    register: grubdef_onchange
+
+  - shell: grub-mkconfig -o /boot/grub/grub.cfg.new
+    when: grubdef_onchange|changed
+
+  - copy:
+      src: /boot/grub/grub.cfg.new
+      dest: /boot/grub/grub.cfg
+      remote_src: True
+    register: grubcfg_onchange
+
+  - file:
+      state: link
+      src: /usr/lib/systemd/system/{{ item }}
+      dest: /etc/systemd/system/multi-user.target.wants/{{ item }}
+    with_items:
+    - sshd.socket
+    - systemd-networkd.service
+    - systemd-resolved.service
+    - systemd-timesyncd.service
+
+  - copy:
+      src: files/eth.network
+      dest: /etc/systemd/network/eth.network
