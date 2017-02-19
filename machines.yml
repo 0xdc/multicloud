@@ -29,6 +29,13 @@
       path: /.ansible-sync
       state: touch
 
+  # I don't have a good non-destructive test for this perl upgrade
+  # but this shell command detects and fixes it most of the time
+  - shell: '(qlist -IC "virtual/perl-*"; qlist -IC "dev-perl/*") | xargs emerge -1 dev-lang/perl'
+  # just run it once, if we sync the tree
+    when: syncmark.stat.exists is defined and not syncmark.stat.exists
+  # git, the next package, depends on perl rather heavily
+
   - portage: package=dev-vcs/git state=present
 
   - git:
