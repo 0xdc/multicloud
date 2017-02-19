@@ -30,17 +30,6 @@
       state: touch
     when: syncmark.stat.exists is defined and not syncmark.stat.exists
 
-  # detect if systemd is installed
-  - shell: qlist -I sys-apps/systemd
-    failed_when: False
-    register: systemd
-
-  - portage: package={{ item }} state=absent
-    when: '"" == systemd.stdout'
-    with_items:
-    - sys-fs/udev
-    - virtual/udev
-
   - portage: package=dev-vcs/git state=present
 
   - git:
@@ -58,4 +47,23 @@
 
   - shell: eselect profile set 0xdc:amd64
 
+  # detect if systemd is installed
+  - shell: qlist -I sys-apps/systemd
+    failed_when: False
+    register: systemd
+
+  - portage: state=absent
+    when: '"" == systemd.stdout'
+    with_items:
+    - sys-fs/udev
+    - sys-fs/eudev
+    - virtual/udev
+    - virtual/dev-manager
+    loop_control:
+      loop_var: package
+
   - portage: package=sys-apps/systemd
+    # Because we removed udev above, pciutils needs to be built
+    # without udev support
+    environment:
+      USE: -udev
