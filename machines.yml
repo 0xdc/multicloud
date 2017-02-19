@@ -12,8 +12,8 @@
     - pause: seconds=30
 
   vars_files:
-  - config.yml
-  - "{{ cloud_provider }}.yml"
+  - config/config.yml
+  - config/{{ cloud_provider }}.yml
 
 - hosts: all
   tasks:
