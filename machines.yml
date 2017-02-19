@@ -4,7 +4,7 @@
   become: no
   tasks:
 
-    - include: create.yml
+    - include: tasks/create.yml
       with_items: "{{ range(replicas) | list }}"
       loop_control:
         loop_var: "replica"
