@@ -9,7 +9,8 @@
       loop_control:
         loop_var: "replica"
 
-    - pause: seconds=30
+    - name: pause for server boot
+      pause: seconds=30
 
   vars_files:
   - config/config.yml
@@ -18,47 +19,58 @@
 - hosts: all
   tasks:
   # Reduce aggressiveness of syncing
-  - stat:
+  - name: check for previous run marker
+		stat:
       path: /.ansible-sync
     register: syncmark
 
-  - portage: sync=yes
+  - name: sync the portage tree
+    portage: sync=yes
     when: syncmark.stat.exists is defined and not syncmark.stat.exists
 
-  - file:
+  - name: update previous run marker
+    file:
       path: /.ansible-sync
       state: touch
 
   # I don't have a good non-destructive test for this perl upgrade
   # but this shell command detects and fixes it most of the time
-  - shell: '(qlist -IC "virtual/perl-*"; qlist -IC "dev-perl/*") | xargs emerge -1 dev-lang/perl'
+  - name: update perl
+    shell: '(qlist -IC "virtual/perl-*"; qlist -IC "dev-perl/*") | xargs emerge -1 dev-lang/perl'
   # just run it once, if we sync the tree
     when: syncmark.stat.exists is defined and not syncmark.stat.exists
   # git, the next package, depends on perl rather heavily
 
-  - portage: package=dev-vcs/git state=present
+  - name: install git
+    portage: package=dev-vcs/git state=present
 
-  - git:
+  - name: checkout overlay
+    git:
       repo: https://github.com/0xdc/overlay
       dest: /usr/local/0xdc-overlay
 
-  - file:
+  - name: create repos.conf directory
+    file:
       path: /etc/portage/repos.conf
       state: directory
 
-  - copy:
+  - name: install overlay
+    copy:
       src: /usr/local/0xdc-overlay/metadata/repos.conf
       dest: /etc/portage/repos.conf/0xdc.conf
       remote_src: True
 
-  - shell: eselect profile set 0xdc:amd64
+  - name: set profile
+    shell: eselect profile set 0xdc:amd64
 
   # detect if systemd is installed
-  - shell: qlist -I sys-apps/systemd
+  - name: detect if systemd is installed
+    shell: qlist -I sys-apps/systemd
     failed_when: False
     register: systemd
 
-  - portage: state=absent
+  - name: remove systemd-incompatible udev packages
+    portage: state=absent
     when: '"" == systemd.stdout'
     with_items:
     - sys-fs/udev
@@ -68,27 +80,32 @@
     loop_control:
       loop_var: package
 
-  - portage: package=sys-apps/systemd
+  - name: install systemd with -udev
+    portage: package=sys-apps/systemd
     # Because we removed udev above, pciutils needs to be built
     # without udev support
     environment:
       USE: -udev
 
-  - copy:
+  - name: configure grub
+    copy:
       src: files/grub.default
       dest: /etc/default/grub
     register: grubdef_onchange
 
-  - shell: grub-mkconfig -o /boot/grub/grub.cfg.new
+  - name: regenerate grub.cfg
+    shell: grub-mkconfig -o /boot/grub/grub.cfg.new
     when: grubdef_onchange|changed
 
-  - copy:
+  - name: update grub.cfg
+    copy:
       src: /boot/grub/grub.cfg.new
       dest: /boot/grub/grub.cfg
       remote_src: True
     register: grubcfg_onchange
 
-  - file:
+  - name: enable systemd services
+    file:
       state: link
       src: /usr/lib/systemd/system/{{ item }}
       dest: /etc/systemd/system/multi-user.target.wants/{{ item }}
@@ -98,6 +115,7 @@
     - systemd-resolved.service
     - systemd-timesyncd.service
 
-  - copy:
+  - name: configure networkd ethernet devices
+    copy:
       src: files/eth.network
       dest: /etc/systemd/network/eth.network

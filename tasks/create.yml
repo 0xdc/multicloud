@@ -1,4 +1,5 @@
-- os_server:
+- name: create openstack server
+  os_server:
     cloud: "{{ cloud_provider }}"
     region_name: "{{ cloud_region }}"
 
@@ -15,7 +16,8 @@
   register: server
 
 
-- cloudflare_dns:
+- name: update DNS records
+  cloudflare_dns:
     account_email: "{{ cf_account }}"
     account_api_token: "{{ cf_apikey }}"
 
@@ -34,7 +36,8 @@
   - { type: A,    value: "{{ server.openstack.accessIPv4 }}" }
   - { type: AAAA, value: "{{ server.openstack.accessIPv6 }}" }
 
-- add_host:
+- name: add host to inventory
+  add_host:
     name: "{{ server.openstack.accessIPv6 }}"
     group: "{{ server_name }}"
     ansible_python_interpreter: /usr/bin/python2
