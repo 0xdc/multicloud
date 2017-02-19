@@ -28,7 +28,6 @@
   - file:
       path: /.ansible-sync
       state: touch
-    when: syncmark.stat.exists is defined and not syncmark.stat.exists
 
   - portage: package=dev-vcs/git state=present
 
