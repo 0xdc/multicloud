@@ -20,7 +20,7 @@
   tasks:
   # Reduce aggressiveness of syncing
   - name: check for previous run marker
-		stat:
+    stat:
       path: /.ansible-sync
     register: syncmark
 
