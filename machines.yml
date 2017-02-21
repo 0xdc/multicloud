@@ -20,6 +20,16 @@
 - hosts: all
   tasks:
   ## Firstboot
+  - name: create repos.conf directory
+    file:
+      path: /etc/portage/repos.conf
+      state: directory
+
+  - name: create gentoo repos.conf
+    template:
+      src: templates/gentoo-repo.conf.j2
+      dest: /etc/portage/repos.conf/gentoo.conf
+
   # Reduce aggressiveness of syncing
   - name: check for previous run marker
     stat:
@@ -52,11 +62,6 @@
     git:
       repo: https://github.com/0xdc/overlay
       dest: /usr/local/0xdc-overlay
-
-  - name: create repos.conf directory
-    file:
-      path: /etc/portage/repos.conf
-      state: directory
 
   - name: install overlay
     copy:

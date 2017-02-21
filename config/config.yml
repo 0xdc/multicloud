@@ -9,3 +9,5 @@ replicas: 1
 
 cf_account: "{{ secret_cf_account }}"
 cf_apikey:  "{{ secret_cf_apikey  }}"
+
+sync_host: "{{ secret_sync_host }}"
