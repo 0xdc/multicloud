@@ -41,3 +41,5 @@
     name: "{{ server.openstack.accessIPv6 }}"
     group: "{{ server_name }}"
     ansible_python_interpreter: /usr/bin/python2
+    fqdn: "{{ server_name }}{{ replica }}.{{ zone }}"
+    server_hostname: "{{ server_name }}{{ replica }}"

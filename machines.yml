@@ -18,6 +18,11 @@
 
 - hosts: all
   tasks:
+  - name: set systemd hostname
+    copy:
+      content: "{{ server_hostname }}"
+      dest: /etc/hostname
+
   # Reduce aggressiveness of syncing
   - name: check for previous run marker
     stat:
