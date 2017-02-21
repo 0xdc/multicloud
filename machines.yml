@@ -119,3 +119,12 @@
     copy:
       src: files/eth.network
       dest: /etc/systemd/network/eth.network
+
+  - name: detect if systemd is running
+    shell: systemctl --no-pager
+    register: systemd
+    ignore_errors: yes
+
+  - name: reboot into systemd
+    shell: reboot
+    when: systemd|failed
