@@ -11,6 +11,7 @@
       #cloud-config
       runcmd:
       - dhclient eth0
+      disable_root: false
 
     key_name: "{{ ansible_hostname }}"
   register: server
