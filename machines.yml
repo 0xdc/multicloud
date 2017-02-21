@@ -14,6 +14,7 @@
 
   vars_files:
   - config/config.yml
+  - config/vault.yml
   - config/{{ cloud_provider }}.yml
 
 - hosts: all
