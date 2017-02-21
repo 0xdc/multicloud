@@ -19,6 +19,7 @@
 
 - hosts: all
   tasks:
+  ## Firstboot
   # Reduce aggressiveness of syncing
   - name: check for previous run marker
     stat:
@@ -38,12 +39,14 @@
   # but this shell command detects and fixes it most of the time
   - name: update perl
     shell: '(qlist -IC "virtual/perl-*"; qlist -IC "dev-perl/*") | xargs emerge -1 dev-lang/perl'
-  # just run it once, if we sync the tree
+    # just run it once, if we sync the tree
     when: syncmark.stat.exists is defined and not syncmark.stat.exists
-  # git, the next package, depends on perl rather heavily
 
-  - name: install git
+  ## Profile
+  - name: install git[-perl,-python]
     portage: package=dev-vcs/git state=present
+    environment:
+      USE: -perl -python
 
   - name: checkout overlay
     git:
