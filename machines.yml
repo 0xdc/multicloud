@@ -70,15 +70,15 @@
     register: systemd
 
   - name: remove systemd-incompatible udev packages
-    portage: state=absent
+    portage: state=absent package={{ item }}
     when: '"" == systemd.stdout'
     with_items:
     - sys-fs/udev
     - sys-fs/eudev
     - virtual/udev
     - virtual/dev-manager
-    loop_control:
-      loop_var: package
+    # Cannot use loop_control.loop_var as ansible does not pass
+    # it down to the module
 
   - name: install systemd with -udev
     portage: package=sys-apps/systemd
