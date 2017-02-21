@@ -19,11 +19,6 @@
 
 - hosts: all
   tasks:
-  - name: set systemd hostname
-    copy:
-      content: "{{ server_hostname }}"
-      dest: /etc/hostname
-
   # Reduce aggressiveness of syncing
   - name: check for previous run marker
     stat:
@@ -71,6 +66,32 @@
     shell: eselect profile set 0xdc:amd64
     # TODO: set according to architecture
 
+  ## Bootloader (GRUB2)
+  - name: configure grub
+    copy:
+      src: files/grub.default
+      dest: /etc/default/grub
+    register: grubdef_onchange
+
+  - name: regenerate grub.cfg
+    shell: grub-mkconfig -o /boot/grub/grub.cfg.new
+    when: grubdef_onchange|changed
+
+  - name: update grub.cfg
+    copy:
+      src: /boot/grub/grub.cfg.new
+      dest: /boot/grub/grub.cfg
+      remote_src: True
+    register: grubcfg_onchange
+    # This can leave the bootloader config in an incorrect state if
+    # systemd tasks fail to install systemd
+
+  ## Systemd
+  - name: set systemd hostname
+    copy:
+      content: "{{ server_hostname }}"
+      dest: /etc/hostname
+
   # detect if systemd is installed
   - name: detect if systemd is installed
     shell: qlist -I sys-apps/systemd
@@ -94,23 +115,6 @@
     # without udev support
     environment:
       USE: -udev
-
-  - name: configure grub
-    copy:
-      src: files/grub.default
-      dest: /etc/default/grub
-    register: grubdef_onchange
-
-  - name: regenerate grub.cfg
-    shell: grub-mkconfig -o /boot/grub/grub.cfg.new
-    when: grubdef_onchange|changed
-
-  - name: update grub.cfg
-    copy:
-      src: /boot/grub/grub.cfg.new
-      dest: /boot/grub/grub.cfg
-      remote_src: True
-    register: grubcfg_onchange
 
   - name: enable systemd services
     file:
