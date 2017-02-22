@@ -4,7 +4,7 @@ main-repo = gentoo
 [gentoo]
 location = /usr/portage
 sync-type = rsync
-sync-uri = {{ sync_host | default(rsync://rsync.gentoo.org) }}/gentoo-portage
+sync-uri = rsync://{{ sync_host | default("rsync.gentoo.org") }}/gentoo-portage
 auto-sync = yes
 
 # for daily squashfs snapshots
