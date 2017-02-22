@@ -71,8 +71,10 @@
     # XXX: The copy module errors in a python3-only environment
 
   - name: set profile
-    shell: eselect profile set 0xdc:amd64
-    # TODO: set according to architecture
+    file:
+      state: link
+      src: /usr/local/0xdc-overlay/profiles/amd64
+    # TODO: set according to (AMD64/ARM) architecture
 
   ## Bootloader (GRUB2)
   - name: configure grub
