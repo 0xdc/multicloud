@@ -142,11 +142,11 @@
       src: files/eth.network
       dest: /etc/systemd/network/eth.network
 
-  - name: detect if systemd is running
-    shell: systemctl --no-pager
-    register: systemd
-    ignore_errors: yes
-
-  - name: reboot into systemd
-    shell: reboot
-    when: systemd|failed
+  - block:
+    - name: detect if systemd is running
+      shell: systemctl --no-pager
+    rescue:
+    - name: reboot into systemd
+      shell: reboot
+    - name: pause for server reboot
+      pause: seconds=30
