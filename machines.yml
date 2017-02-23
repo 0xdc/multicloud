@@ -73,7 +73,8 @@
   - name: set profile
     file:
       state: link
-      src: /usr/local/0xdc-overlay/profiles/amd64
+      src:  /usr/local/0xdc-overlay/profiles/amd64
+      path: /etc/portage/make.profile
     # TODO: set according to (AMD64/ARM) architecture
 
   ## Bootloader (GRUB2)
