@@ -1,0 +1,21 @@
+---
+layout:
+  web:
+    replicas: 3
+
+  db:
+    replicas: 1
+
+  mail:
+    replicas: 0
+
+  xmpp:
+    replicas: 0
+
+  rtmp:
+    replicas: 2
+
+  binhost:
+    replicas: 0
+  share:
+    replicas: 2

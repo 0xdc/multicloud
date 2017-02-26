@@ -1,12 +1,20 @@
+# Find out if the server exists before we attempt to create it
+# shade does not tell us if the server existed before creation
+- name: get facts for server
+  os_server_facts:
+    cloud: "{{ cloud_provider }}"
+    region_name: "{{ cloud_region }}"
+
+    server: '{{ create.key }}{{ replica | default("") }}'
+
 - name: create openstack server
   os_server:
     cloud: "{{ cloud_provider }}"
     region_name: "{{ cloud_region }}"
 
-    name: "{{ server_name }}{{ replica }}"
-    meta: "role={{ server_name }}"
-    flavor: "{{ flavor }}"
-    image: "{{ image }}"
+    name: '{{ create.key }}{{ replica | default("") }}'
+    flavor: "{{ create.value.flavor | default(flavor) }}"
+    image: "{{ create.value.image | default(image) }}"
     userdata: |
       #cloud-config
       runcmd:
@@ -15,6 +23,7 @@
 
     key_name: "{{ ansible_hostname }}"
   register: server
+  changed_when: openstack_servers == []
 
 
 - name: update DNS records
@@ -27,20 +36,23 @@
 
     # solo affects these two attrs
     solo: yes
-    record: "{{ server_name }}{{ replica }}"
+    record: '{{ create.key }}{{ replica | default("") }}'
     type: "{{ item.type }}"
 
     value: "{{ item.value }}"
   loop_control:
-    label: "{{ server_name }}{{ replica }}"
+    label: '{{ create.key }}{{ replica | default("") }}'
   with_items:
   - { type: A,    value: "{{ server.openstack.accessIPv4 }}" }
   - { type: AAAA, value: "{{ server.openstack.accessIPv6 }}" }
+  when: openstack_servers == []
 
 - name: add host to inventory
   add_host:
-    name: "{{ server.openstack.accessIPv6 }}"
-    group: "{{ server_name }}"
+    name: '{{ create.key }}{{ replica | default("") }}'
+
+    group: '{{ (create.key == "aio") | ternary("web,db,mail,xmpp,rtmp", create.key) }}'
+    ansible_host: "{{ server.openstack.accessIPv6 }}"
+
+    fqdn: '{{ create.key }}{{ replica | default("") }}.{{ zone }}'
     ansible_python_interpreter: /usr/bin/python2
-    fqdn: "{{ server_name }}{{ replica }}.{{ zone }}"
-    server_hostname: "{{ server_name }}{{ replica }}"

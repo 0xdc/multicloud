@@ -4,16 +4,17 @@
   become: no
   tasks:
 
-    - include: tasks/create.yml
-      with_items: "{{ range(replicas) | list }}"
+    - include: tasks/replicas.yml
+      with_dict: "{{ layout }}"
       loop_control:
-        loop_var: "replica"
+        loop_var: "role"
 
     - name: pause for server boot
       pause: seconds=30
 
   vars_files:
   - config/config.yml
+  - config/layout.yml
   - config/vault.yml
   - config/{{ cloud_provider }}.yml
 
@@ -100,7 +101,7 @@
   ## Systemd
   - name: set systemd hostname
     copy:
-      content: "{{ server_hostname }}"
+      content: "{{ ansible_hostname }}"
       dest: /etc/hostname
 
   # detect if systemd is installed

@@ -1,0 +1,10 @@
+- name: spin up replicas
+  when: 'role.value.replicas != 0'
+  include: tasks/create.yml create={{ role }}
+  with_items: '{{ range(role.value.replicas) | list }}'
+  loop_control:
+    loop_var: replica
+
+- name: spin up single
+  when: 'role.value.replicas == 0'
+  include: tasks/create.yml create={{ role }}
