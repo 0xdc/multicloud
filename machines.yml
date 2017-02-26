@@ -9,9 +9,6 @@
       loop_control:
         loop_var: "role"
 
-    - name: pause for server boot
-      pause: seconds=30
-
   vars_files:
   - config/config.yml
   - config/layout.yml
@@ -150,5 +147,5 @@
     rescue:
     - name: reboot into systemd
       shell: reboot
-    - name: pause for server reboot
-      pause: seconds=30
+    - name: wait for server boot
+      include: tasks/wait.yml

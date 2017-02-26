@@ -1,0 +1,10 @@
+---
+- name: wait for server boot
+  # I super-dislike this method...
+  # ...but nothing else works :'(
+  local_action: command ssh -oBatchMode=yes -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -oUser=root {{ ansible_host }} true
+  register: ssh
+  until: ssh|success
+  # try for 30 seconds
+  retries: 6
+  delay: 5
