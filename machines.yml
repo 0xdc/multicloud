@@ -149,6 +149,8 @@
       dest: /etc/systemd/system/multi-user.target.wants/{{ item }}
     with_items:
     - sshd.socket
+    # systemd
+    - systemd-networkd.socket
     - systemd-networkd.service
     - systemd-resolved.service
     - systemd-timesyncd.service
