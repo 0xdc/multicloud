@@ -16,6 +16,12 @@
   - config/{{ cloud_provider }}.yml
 
 - hosts: all
+  gather_facts: no
+  tasks:
+  - name: wait for server boot
+    include: tasks/wait.yml
+
+- hosts: all
   tasks:
   ## Firstboot
   - name: create repos.conf directory
