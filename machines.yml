@@ -34,6 +34,11 @@
       src: templates/gentoo-repo.conf.j2
       dest: /etc/portage/repos.conf/gentoo.conf
 
+  - name: make.conf binpkg
+    template:
+      src: templates/make.conf.j2
+      dest: /etc/portage/make.conf
+
   # Reduce aggressiveness of syncing
   - name: check for previous run marker
     stat:
@@ -159,6 +164,13 @@
     copy:
       src: files/eth.network
       dest: /etc/systemd/network/eth.network
+
+  vars_files:
+  - config/config.yml
+  - config/vault.yml
+
+- hosts: all
+  tasks:
 
   - block:
     - name: detect if systemd is running
