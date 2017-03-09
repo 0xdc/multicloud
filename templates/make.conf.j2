@@ -1,0 +1,6 @@
+source /etc/portage/make.conf.catalyst
+
+{% if sync_host %}
+FEATURES="$FEATURES getbinpkg"
+PORTAGE_BINHOST="https://{{ sync_host }}/"
+{% endif %}

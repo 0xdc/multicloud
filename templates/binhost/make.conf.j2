@@ -1,0 +1,8 @@
+source /etc/portage/make.conf.catalyst
+
+FEATURES="$FEATURES buildpkg binpkg-multi-instance"
+
+{% if sync_host %}
+FEATURES="$FEATURES getbinpkg"
+PORTAGE_BINHOST="https://{{ sync_host }}/"
+{% endif %}
