@@ -15,11 +15,6 @@
     name: '{{ create.key }}{{ replica | default("") }}'
     flavor: "{{ create.value.flavor | default(flavor) }}"
     image: "{{ create.value.image | default(image) }}"
-    userdata: |
-      #cloud-config
-      runcmd:
-      - dhclient eth0
-      disable_root: false
 
     key_name: "{{ ansible_hostname }}"
   register: server
@@ -55,5 +50,4 @@
     ansible_host: "{{ server.openstack.accessIPv6 }}"
 
     fqdn: '{{ create.key }}{{ replica | default("") }}.{{ zone }}'
-    ansible_python_interpreter: /usr/bin/python2
 
