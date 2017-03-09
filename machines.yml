@@ -67,12 +67,18 @@
       repo: https://github.com/0xdc/overlay
       dest: /usr/local/0xdc-overlay
 
-  - name: install overlay
-    copy:
-      src: /usr/local/0xdc-overlay/metadata/repos.conf
-      dest: /etc/portage/repos.conf/0xdc.conf
-      remote_src: True
-    # XXX: The copy module errors in a python3-only environment
+  - block:
+    - name: install overlay
+      copy:
+        src: /usr/local/0xdc-overlay/metadata/repos.conf
+        dest: /etc/portage/repos.conf/0xdc.conf
+        remote_src: True
+      # XXX: The copy module errors in a python3-only environment
+    rescue:
+    - name: install overlay from local repos.conf
+      copy:
+        src: files/0xdc.conf
+        dest: /etc/portage/repos.conf/0xdc.conf
 
   - name: set profile
     file:
@@ -91,13 +97,18 @@
   - name: regenerate grub.cfg
     shell: grub-mkconfig -o /boot/grub/grub.cfg.new
     when: grubdef_onchange|changed
+    register: grubcfg_regen
 
-  - name: update grub.cfg
-    copy:
-      src: /boot/grub/grub.cfg.new
-      dest: /boot/grub/grub.cfg
-      remote_src: True
-    register: grubcfg_onchange
+  - block:
+    - name: update grub.cfg
+      copy:
+        src: /boot/grub/grub.cfg.new
+        dest: /boot/grub/grub.cfg
+        remote_src: True
+      when: grubcfg_regen|changed
+    rescue:
+    - name: regenerate grub.cfg
+      shell: grub-mkconfig -o /boot/grub/grub.cfg
     # This can leave the bootloader config in an incorrect state if
     # systemd tasks fail to install systemd
 
