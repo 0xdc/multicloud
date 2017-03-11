@@ -4,7 +4,8 @@
   become: no
   tasks:
 
-    - include: tasks/replicas.yml
+    - name: spin up
+      include: tasks/replicas.yml
       with_dict: "{{ layout }}"
       loop_control:
         loop_var: "role"
