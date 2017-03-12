@@ -21,6 +21,9 @@
   tasks:
   - name: wait for server boot
     include: tasks/wait.yml
+  vars_files:
+  - config/config.yml
+  - config/vault.yml
 
 - hosts: all
   tasks:
@@ -184,3 +187,7 @@
       pause: seconds=60
     - name: wait for server boot
       include: tasks/wait.yml
+
+  vars_files:
+  - config/config.yml
+  - config/vault.yml
