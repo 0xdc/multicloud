@@ -196,6 +196,9 @@
       pause: seconds=30
     - name: wait for server boot
       include: tasks/wait.yml
+    always:
+    - name: check for connectivity
+      ping:
 
   vars_files:
   - config/config.yml
