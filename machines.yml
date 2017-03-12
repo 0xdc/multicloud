@@ -112,7 +112,7 @@
         remote_src: True
       when: grubcfg_regen|changed
     rescue:
-    - name: regenerate grub.cfg
+    - name: regenerate grub.cfg (overwrite)
       shell: grub-mkconfig -o /boot/grub/grub.cfg
     # This can leave the bootloader config in an incorrect state if
     # systemd tasks fail to install systemd
@@ -160,7 +160,7 @@
     environment:
       USE: -udev
 
-  - name: enable systemd services
+  - name: enable systemd (multi-user) services
     file:
       state: link
       src: /usr/lib/systemd/system/{{ item }}
