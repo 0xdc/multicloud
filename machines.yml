@@ -123,6 +123,19 @@
       content: "{{ ansible_hostname }}"
       dest: /etc/hostname
 
+  - block:
+    - name: systemd keywords
+      lineinfile:
+        line: "{{ item }}"
+        dest: /etc/portage/package.keywords/cloud
+      with_items:
+      - =sys-apps/systemd-233 ~amd64
+      - =sys-libs/libseccomp-2.3.1 ~amd64
+    rescue:
+    - copy:
+        src: systemd.keywords
+        dest: /etc/portage/package.keywords/systemd
+
   # detect if systemd is installed
   - name: detect if systemd is installed
     shell: qlist -I sys-apps/systemd
