@@ -45,26 +45,21 @@
       dest: /etc/portage/make.conf
 
   # Reduce aggressiveness of syncing
-  - name: check for previous run marker
+  - name: check for portage tree
     stat:
-      path: /.ansible-sync
-    register: syncmark
+      path: /usr/portage/metadata/timestamp
+    register: timestamp
 
-  - name: sync the portage tree
-    portage: sync=yes
-    when: syncmark.stat.exists is defined and not syncmark.stat.exists
+  - block:
+    - name: sync the portage tree
+      portage: sync=yes
 
-  - name: update previous run marker
-    file:
-      path: /.ansible-sync
-      state: touch
-
-  # I don't have a good non-destructive test for this perl upgrade
-  # but this shell command detects and fixes it most of the time
-  - name: update perl
-    shell: '(qlist -IC "virtual/perl-*"; qlist -IC "dev-perl/*") | xargs emerge -1 dev-lang/perl'
-    # just run it once, if we sync the tree
-    when: syncmark.stat.exists is defined and not syncmark.stat.exists
+    # I don't have a good non-destructive test for this perl upgrade
+    # but this shell command detects and fixes it most of the time
+    - name: update perl
+      shell: '(qlist -IC "virtual/perl-*"; qlist -IC "dev-perl/*") | xargs emerge -1 dev-lang/perl'
+      # just run it once, if we sync the tree
+    when: timestamp.stat.exists is defined and not timestamp.stat.exists
 
   ## Profile
   - name: install git[-perl,-python]
