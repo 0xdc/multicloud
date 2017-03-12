@@ -193,7 +193,7 @@
       shell: reboot
     # Server does not close SSH immediately
     - name: wait for server to go down
-      pause: seconds=60
+      pause: seconds=30
     - name: wait for server boot
       include: tasks/wait.yml
 
