@@ -26,6 +26,7 @@
   - config/vault.yml
 
 - hosts: all
+  strategy: '{{ strategy | default("linear") }}'
   tasks:
   ## Firstboot
   - name: create repos.conf directory
