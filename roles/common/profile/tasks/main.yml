@@ -1,0 +1,30 @@
+  ## Profile
+  - name: install git[-perl,-python]
+    portage: package=dev-vcs/git state=present
+    environment:
+      USE: -perl -python
+
+  - name: checkout overlay
+    git:
+      repo: https://github.com/0xdc/overlay
+      dest: /usr/local/0xdc-overlay
+
+  - block:
+    - name: install overlay
+      copy:
+        src: /usr/local/0xdc-overlay/metadata/repos.conf
+        dest: /etc/portage/repos.conf/0xdc.conf
+        remote_src: True
+      # XXX: The copy module errors in a python3-only environment
+    rescue:
+    - name: install overlay from local repos.conf
+      copy:
+        src: 0xdc.conf
+        dest: /etc/portage/repos.conf/0xdc.conf
+
+  - name: set profile
+    file:
+      state: link
+      src:  /usr/local/0xdc-overlay/profiles/amd64
+      path: /etc/portage/make.profile
+    # TODO: set according to (AMD64/ARM) architecture

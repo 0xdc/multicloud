@@ -1,0 +1,24 @@
+ ## Bootloader (GRUB2)
+ - name: configure grub
+   copy:
+     src: grub.default
+     dest: /etc/default/grub
+   register: grubdef_onchange
+
+ - name: regenerate grub.cfg
+   shell: grub-mkconfig -o /boot/grub/grub.cfg.new
+   when: grubdef_onchange|changed
+   register: grubcfg_regen
+
+ - block:
+   - name: update grub.cfg
+     copy:
+       src: /boot/grub/grub.cfg.new
+       dest: /boot/grub/grub.cfg
+       remote_src: True
+     when: grubcfg_regen|changed
+   rescue:
+   - name: regenerate grub.cfg (overwrite)
+     shell: grub-mkconfig -o /boot/grub/grub.cfg
+   # This can leave the bootloader config in an incorrect state if
+   # systemd tasks fail to install systemd
