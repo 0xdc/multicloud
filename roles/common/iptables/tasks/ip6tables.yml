@@ -1,0 +1,24 @@
+---
+- block:
+  - name: checkout ip6tables
+    git:
+      repo: https://gist.github.com/theappleman/01aa117a719e0bb9d4b895bccb97abc1
+      dest: /var/lib/ip6tables
+  rescue:
+  - name: cleanup /var/lib/ip6tables
+    file:
+      path: /var/lib/ip6tables
+      state: absent
+
+  - name: checkout ip6tables
+    git:
+      repo: https://gist.github.com/theappleman/01aa117a719e0bb9d4b895bccb97abc1
+      dest: /var/lib/ip6tables
+  always:
+  - name: create rules-save.d folder
+    file:
+      path: /var/lib/ip6tables/rules-save.d
+      state: directory
+  - name: regenerate ip6tables rules
+    make:
+      chdir: /var/lib/ip6tables

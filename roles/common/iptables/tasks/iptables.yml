@@ -1,0 +1,24 @@
+---
+- block:
+    - name: checkout iptables
+      git:
+        repo: https://gist.github.com/theappleman/88a3d132b4175dc22cf6a090aaf41e06
+        dest: /var/lib/ip6tables
+  rescue:
+    - name: cleanup /var/lib/iptables
+      file:
+        path: /var/lib/iptables
+        state: absent
+
+    - name: checkout iptables
+      git:
+        repo: https://gist.github.com/theappleman/88a3d132b4175dc22cf6a090aaf41e06
+        dest: /var/lib/ip6tables
+  always:
+  - name: create rules-save.d folder
+    file:
+      path: /var/lib/ip6tables/rules-save.d
+      state: directory
+  - name: regenerate iptables rules
+    make:
+      chdir: /var/lib/ip6tables

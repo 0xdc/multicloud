@@ -31,6 +31,7 @@
   roles:
   - common/firstboot
   - common/profile
+  - common/iptables
   - common/grub
   - common/systemd
 
