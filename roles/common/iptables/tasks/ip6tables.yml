@@ -22,3 +22,8 @@
   - name: regenerate ip6tables rules
     make:
       chdir: /var/lib/ip6tables
+  - name: enable ip6tables-restore
+    systemd:
+      enabled: yes
+      # state: started
+      name: ip6tables-restore

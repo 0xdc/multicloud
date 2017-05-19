@@ -31,9 +31,9 @@
   roles:
   - common/firstboot
   - common/profile
-  - common/iptables
   - common/grub
   - common/systemd
+  - common/iptables
 
   vars_files:
   - config/config.yml

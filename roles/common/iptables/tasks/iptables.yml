@@ -3,7 +3,7 @@
     - name: checkout iptables
       git:
         repo: https://gist.github.com/theappleman/88a3d132b4175dc22cf6a090aaf41e06
-        dest: /var/lib/ip6tables
+        dest: /var/lib/iptables
   rescue:
     - name: cleanup /var/lib/iptables
       file:
@@ -13,12 +13,17 @@
     - name: checkout iptables
       git:
         repo: https://gist.github.com/theappleman/88a3d132b4175dc22cf6a090aaf41e06
-        dest: /var/lib/ip6tables
+        dest: /var/lib/iptables
   always:
   - name: create rules-save.d folder
     file:
-      path: /var/lib/ip6tables/rules-save.d
+      path: /var/lib/iptables/rules-save.d
       state: directory
   - name: regenerate iptables rules
     make:
-      chdir: /var/lib/ip6tables
+      chdir: /var/lib/iptables
+  - name: enable iptables-restore
+    systemd:
+      state: started
+      # enabled: yes
+      name: iptables-restore
