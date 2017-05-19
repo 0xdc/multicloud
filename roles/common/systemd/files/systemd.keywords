@@ -1,8 +1,0 @@
-# required by sys-apps/dbus-1.10.12::gentoo[systemd]
-=sys-apps/systemd-233 ~amd64
-# required by sys-apps/systemd-233::gentoo[seccomp]
-# required by virtual/udev-217::gentoo
-# required by virtual/dev-manager-0::gentoo
-# required by @system
-# required by @world (argument)
-=sys-libs/libseccomp-2.3.1 ~amd64
