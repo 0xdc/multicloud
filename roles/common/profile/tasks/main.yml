@@ -21,10 +21,10 @@
       copy:
         src: 0xdc.conf
         dest: /etc/portage/repos.conf/0xdc.conf
-
-  - name: set profile
-    file:
-      state: link
-      src:  /usr/local/0xdc-overlay/profiles/amd64
-      path: /etc/portage/make.profile
-    # TODO: set according to (AMD64/ARM) architecture
+    always:
+    - name: set profile
+      file:
+        state: link
+        src:  /usr/local/0xdc-overlay/profiles/amd64
+        path: /etc/portage/make.profile
+        # TODO: set according to (AMD64/ARM) architecture
