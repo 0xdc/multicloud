@@ -11,8 +11,11 @@
 
 - name: make.conf binpkg
   template:
-    src: make.conf.j2
+    src: "{{ item }}"
     dest: /etc/portage/make.conf
+  with_first_found:
+  - "{{ inventory_hostname }}/make.conf.j2"
+  - make.conf.j2
 
 # Reduce aggressiveness of syncing
 - name: check for portage tree
