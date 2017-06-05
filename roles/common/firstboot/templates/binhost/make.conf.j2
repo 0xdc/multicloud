@@ -1,6 +1,9 @@
 source /etc/portage/make.conf.catalyst
 
 FEATURES="$FEATURES buildpkg binpkg-multi-instance"
+EMERGE_DEFAULT_OPTS="--buildpkg-exclude 'virtual/* sys-kernel/*-sources sys-devel/gcc sys-devel/libtool'"
+
+EMERGE_DEFAULT_OPTS="$EMERGE_DEFAULT_OPTS --quiet-build"
 
 {% if sync_host %}
 FEATURES="$FEATURES getbinpkg"

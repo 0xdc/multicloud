@@ -1,5 +1,7 @@
 source /etc/portage/make.conf.catalyst
 
+EMERGE_DEFAULT_OPTS="$EMERGE_DEFAULT_OPTS --quiet-build"
+
 {% if sync_host %}
 FEATURES="$FEATURES getbinpkg"
 PORTAGE_BINHOST="https://{{ sync_host }}/"

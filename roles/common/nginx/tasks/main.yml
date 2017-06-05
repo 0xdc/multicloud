@@ -1,0 +1,34 @@
+- name: Install nginx
+  portage: package=nginx
+
+- name: create nginx subdirectories
+  file:
+    state: directory
+    dest: "{{ item }}"
+  with_items:
+  - /etc/nginx/conf.d
+  - /etc/nginx/vhosts.d
+
+- name: customise nginx config
+  copy:
+    src: "{{ item }}"
+    dest: /etc/nginx/{{ item }}
+  with_items:
+  - nginx.conf
+  - ssl.include
+  - acme-challenge.include
+  notify: restart nginx
+
+- name: enable nginx
+  service:
+    name: nginx
+    enabled: yes
+
+- name: iptables rules
+  copy:
+    content: "[0:0] -A TCP -p tcp -m multiport --dports 80,443 -j ACCEPT\n"
+    dest: /var/lib/{{ item }}/rules-save.d/nginx
+  with_items:
+  - ip6tables
+  - iptables
+  notify: update iptables

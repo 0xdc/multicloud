@@ -1,0 +1,44 @@
+- name: Install mysql server
+  portage:
+    package: virtual/mysql
+
+- name: install mysql database
+  shell: /usr/share/mysql/scripts/mysql_install_db
+  args:
+    chdir: /usr
+    creates: /var/lib/mysql/ibdata1
+
+- name: create /run/mysql
+  shell: systemd-tmpfiles --create
+  args:
+    creates: /run/mysql
+
+- name: start mysql server
+  service:
+    name: mysqld
+    state: started
+    enabled: yes
+
+- name: secure mysql
+  shell: mysql -e "{{ item }}"
+  with_items:
+  - DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')
+  - DELETE FROM mysql.user WHERE User=''
+  - DROP DATABASE IF EXISTS test
+  - DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%'
+  - FLUSH PRIVILEGES
+
+- name: get or generate root password
+  set_fact:
+    mysql_pass: "{{ lookup('password', 'credentials/' + ansible_hostname + '/mysql length=15' ) }}"
+
+- name: set root password
+  shell: mysqladmin password {{ mysql_pass }}
+  register: mysqladmin
+  changed_when: mysqladmin.rc == 0
+  failed_when: mysqladmin.rc != 0
+
+- name: configure my.cnf
+  template:
+    src: my.cnf.j2
+    dest: /root/.my.cnf
