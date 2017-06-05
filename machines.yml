@@ -38,3 +38,7 @@
   vars_files:
   - config/config.yml
   - config/vault.yml
+
+- hosts: db
+  roles:
+  - db/server
