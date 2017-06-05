@@ -39,6 +39,10 @@
   - config/config.yml
   - config/vault.yml
 
+- hosts: web:aio
+  roles:
+  - common/nginx
+
 - hosts: db
   roles:
   - db/server

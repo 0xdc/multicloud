@@ -1,0 +1,5 @@
+location /.well-known/acme-challenge {
+        alias /var/run/acme/.well-known/acme-challenge;
+        access_log /var/log/nginx/acme_log;
+        error_log /var/log/nginx/acme-error_log;
+}
