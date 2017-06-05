@@ -27,4 +27,10 @@
         state: link
         src:  /usr/local/0xdc-overlay/profiles/amd64
         path: /etc/portage/make.profile
-        # TODO: set according to (AMD64/ARM) architecture
+      when: ansible_architecture == "x86_64"
+    - name: set profile
+      file:
+        state: link
+        src:  /usr/local/0xdc-overlay/profiles/arm
+        path: /etc/portage/make.profile
+      when: ansible_architecture.startswith("arm")
