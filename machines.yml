@@ -1,42 +1,7 @@
 #!/usr/bin/env ansible-playbook
 ---
-- hosts: localhost
-  become: no
-  tasks:
-
-    - name: spin up
-      include: tasks/replicas.yml
-      with_dict: "{{ layout }}"
-      loop_control:
-        loop_var: "role"
-
-  vars_files:
-  - config/config.yml
-  - config/layout.yml
-  - config/vault.yml
-
-- hosts: all
-  gather_facts: no
-  tasks:
-  - name: wait for server boot
-    include: tasks/wait.yml
-  vars_files:
-  - config/config.yml
-  - config/vault.yml
-
-- hosts: all
-  strategy: '{{ strategy | default("linear") }}'
-
-  roles:
-  - common/firstboot
-  - common/profile
-  - common/grub
-  - common/systemd
-  - common/iptables
-
-  vars_files:
-  - config/config.yml
-  - config/vault.yml
+- include: spin-up.yml
+- include: common.yml
 
 - hosts: web:aio
   roles:

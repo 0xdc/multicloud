@@ -1,0 +1,14 @@
+- hosts: all
+  strategy: '{{ strategy | default("linear") }}'
+
+  roles:
+  - common/firstboot
+  - common/profile
+  - common/grub
+  - common/systemd
+  - common/iptables
+
+  vars_files:
+  - config/config.yml
+  - config/vault.yml
+
