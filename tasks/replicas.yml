@@ -1,3 +1,8 @@
+- include_vars: "{{ item }}"
+  with_first_found:
+  - config/{{ role.value.cloud }}.yml
+  - config/{{ cloud_provider }}.yml
+
 - name: spin up replicas
   when: 'role.value.replicas != 0'
   include: tasks/create.yml create={{ role }}

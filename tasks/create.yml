@@ -9,8 +9,8 @@
 
 - name: create openstack server
   os_server:
-    cloud: "{{ cloud_provider }}"
-    region_name: "{{ cloud_region }}"
+    cloud: "{{ create.value.cloud | default(cloud_provider) }}"
+    region_name: "{{ create.value.region | default(cloud_region) }}"
 
     name: '{{ create.key }}{{ replica | default("") }}'
     flavor: "{{ create.value.flavor | default(flavor) }}"
