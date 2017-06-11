@@ -4,9 +4,9 @@
   roles:
   - common/firstboot
   - common/profile
-  - common/grub
+  - { role: common/grub, when: ansible_architecture == "x86_64" }
   - common/systemd
-  - common/iptables
+  - { role: common/iptables, when: ansible_architecture == "x86_64" }
 
   vars_files:
   - config/config.yml
