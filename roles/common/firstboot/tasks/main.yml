@@ -30,6 +30,6 @@
   # I don't have a good non-destructive test for this perl upgrade
   # but this shell command detects and fixes it most of the time
   - name: update perl
-    shell: '(qlist -IC "virtual/perl-*"; qlist -IC "dev-perl/*") | xargs emerge -1 dev-lang/perl'
+    shell: '(qlist -IC "virtual/perl-*"; qlist -IC "dev-perl/*") | xargs emerge -1 dev-lang/perl texinfo'
     # just run it once, if we sync the tree
   when: timestamp.stat.exists is defined and not timestamp.stat.exists
