@@ -25,12 +25,12 @@
     - name: set profile
       file:
         state: link
-        src:  /usr/local/0xdc-overlay/profiles/amd64
+        src:  /usr/local/0xdc-overlay/profiles/amd64/{{ subprofile | default("") }}
         path: /etc/portage/make.profile
       when: ansible_architecture == "x86_64"
     - name: set profile
       file:
         state: link
-        src:  /usr/local/0xdc-overlay/profiles/arm
+        src:  /usr/local/0xdc-overlay/profiles/arm/{{ subprofile | default("") }}
         path: /etc/portage/make.profile
-      when: ansible_architecture.startswith("arm")
+      when: ansible_architecture.startswith("armv7")
